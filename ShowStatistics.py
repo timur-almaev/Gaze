@@ -1,6 +1,23 @@
 
 import sys
 import os
+import csv
+
+def ProcessFolder(folderPath):
+    print ' >> Loading \"sensor.csv\" ... '
+    csvPath = os.path.join(folderPath, 'sensor.csv')
+    with open(csvPath, 'rb') as csvFile:
+        csvReader = csv.reader(csvFile, delimiter=',')
+
+        # Each csvRow is a list of 17 entries
+        # Make sure every row has 17 entries
+        # Each frame is named as "webcamera-<timestamp>-[left|right].png"
+        # Each frame must exist
+        # The number of frames must be equal to the number of csv rows
+        for csvRow in csvReader:
+
+            timestamp = csvRow[-1]
+            continue
 
 def main():
     os.system('clear')
@@ -10,7 +27,7 @@ def main():
         return
 
     partitionPath = sys.argv[1]
-    print '\n >> Partition Path: \"' + partitionPath + '\"'
+    print '\n >> Partition path: \"' + partitionPath + '\"'
 
     # Get list of folders within partition
     folders = os.listdir(partitionPath)
@@ -18,6 +35,7 @@ def main():
         folderPath = os.path.join(partitionPath, folder)
         if os.path.isdir(folderPath):
             print '\n >> Looking into: \"' + folder + '\" ... '
+            ProcessFolder(folderPath)
 
     print
 

@@ -2,22 +2,58 @@
 import sys
 import os
 import csv
+import glob
+
+def ProcessCSVRow(csvRow):
+
+    # Here we know that both corresponind frames exist, so we can move on to class conversion (see existing code) and building a distribution.
+
+    return
 
 def ProcessFolder(folderPath):
-    print ' >> Loading \"sensor.csv\" ... '
+    # Get total number of frames
+    nFrames = len(glob.glob(os.path.join(folderPath, '*.png')))
+
+    # Analyse CSV
     csvPath = os.path.join(folderPath, 'sensor.csv')
     with open(csvPath, 'rb') as csvFile:
+
+        nRightImages = 0
+        nLeftImages = 0
+        nCSVRows = 0
+
         csvReader = csv.reader(csvFile, delimiter=',')
-
-        # Each csvRow is a list of 17 entries
-        # Make sure every row has 17 entries
-        # Each frame is named as "webcamera-<timestamp>-[left|right].png"
-        # Each frame must exist
-        # The number of frames must be equal to the number of csv rows
         for csvRow in csvReader:
+            if len(csvRow) != 17:
+                print '\n >> ERROR: Invalid column number \n'
+                continue
 
+            nCSVRows += 1
             timestamp = csvRow[-1]
-            continue
+
+            rightImageName = 'webcamera-' + str(timestamp) + '-right.png'
+            rightImagePath = os.path.join(folderPath, rightImageName)
+            if os.path.isfile(rightImagePath):
+                nRightImages += 1
+
+            leftImageName = 'webcamera-' + str(timestamp) + '-left.png'
+            leftImagePath = os.path.join(folderPath, leftImageName)
+            if os.path.isfile(leftImagePath):
+                nLeftImages += 1
+
+            if os.path.isfile(rightImagePath) and os.path.isfile(leftImagePath):
+                ProcessCSVRow(csvRow)
+
+        if nCSVRows != nRightImages + nLeftImages:
+            print '\n >> ERROR: Some rows point to non-existing frames:'
+            print '\t >> Number of right camera frames: ' + str(nRightImages)
+            print '\t >> Number of left  camera frames: ' + str(nLeftImages)
+            print '\t >> Number of CSV rows: ' + str(nCSVRows)
+
+        if nCSVRows != nFrames:
+            print '\n >> ERROR: Some frames are not listed in the CSV:'
+            print '\t >> Number of frames: ' + str(nFrames)
+            print '\t >> Number of CSV rows: ' + str(nCSVRows)
 
 def main():
     os.system('clear')

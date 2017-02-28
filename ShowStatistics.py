@@ -6,7 +6,7 @@ import glob
 
 def ProcessCSVRow(csvRow):
 
-    # Here we know that both corresponind frames exist, so we can move on to class conversion (see existing code) and building a distribution.
+    # Here we know that both corresponind frames exist, so we can move on to class conversion (see existing code) and building a distribution. If we know how many there are valid samples per class (144 in total), we can compute chance levels for our dataset. This only makes sense to do for the testing set, however it will also be useful to check the other partitions as well. We should only consider one webcam for now, however this does not mean that we don't want to check that all entries of CSV have two frames and vice versa - every frame has a CSV entry located by the timestamp value.
 
     return
 
@@ -67,10 +67,12 @@ def main():
 
     # Get list of folders within partition
     folders = os.listdir(partitionPath)
+    counter = 0
     for folder in folders:
         folderPath = os.path.join(partitionPath, folder)
         if os.path.isdir(folderPath):
-            print '\n >> Looking into: \"' + folder + '\" ... '
+            counter += 1
+            print '\n >> ' + str(counter) + '. Looking into: \"' + folder + '\" ... '
             ProcessFolder(folderPath)
 
     print

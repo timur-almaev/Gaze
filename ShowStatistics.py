@@ -3,6 +3,27 @@ import sys
 import os
 import csv
 import glob
+import numpy as np
+
+def ProcessFrames(folderPath, margin):
+    csvPath = os.path.join(folderPath, 'sensor.csv')
+    csvRows = np.genfromtxt(csvPath, delimiter=',')
+    csvTimeStamps = csvRows[:,-1]
+    csvTimeStamps = np.delete(csvTimeStamps, 0)
+
+    nGoodFrames = 0
+    frames = np.asarray(glob.glob(os.path.join(folderPath, '*.png')))
+    for frame in frames:
+        frameTimeStamp = long(os.path.basename(frame).split('-')[1])
+        diff = np.zeros((len(csvTimeStamps), 2))
+        diff[:,0] = np.arange(0, len(csvTimeStamps), 1)
+        diff[:,1] = np.absolute(csvTimeStamps - frameTimeStamp)
+        diff = diff[diff[:, 1].argsort()]
+
+        if diff[0,1] <= margin:
+            nGoodFrames += 1
+
+    print ' >> ' + str(nGoodFrames)
 
 def ProcessCSVRow(csvRow):
 
@@ -14,6 +35,11 @@ def ProcessFolder(folderPath):
     # Get total number of frames
     nFrames = len(glob.glob(os.path.join(folderPath, '*.png')))
 
+    fobj = open('timestamps.txt', 'w')
+    for frame in glob.glob(os.path.join(folderPath, '*.png')):
+        fobj.write(os.path.basename(frame).split('-')[1] + '\n')
+    fobj.close()
+
     # Analyse CSV
     csvPath = os.path.join(folderPath, 'sensor.csv')
     with open(csvPath, 'rb') as csvFile:
@@ -23,6 +49,7 @@ def ProcessFolder(folderPath):
         nCSVRows = 0
 
         csvReader = csv.reader(csvFile, delimiter=',')
+        csvReader.next()
         for csvRow in csvReader:
             if len(csvRow) != 17:
                 print '\n >> ERROR: Invalid column number \n'
@@ -58,12 +85,15 @@ def ProcessFolder(folderPath):
 def main():
     os.system('clear')
 
-    if len(sys.argv) < 2:
-        print '\n >> Partition path is required \n'
+    if len(sys.argv) < 3:
+        print '\n >> Partition path and margin required \n'
         return
 
     partitionPath = sys.argv[1]
+    margin = int(sys.argv[2])
+
     print '\n >> Partition path: \"' + partitionPath + '\"'
+    print '\n >> Margin: \"' + str(margin) + '\"'
 
     # Get list of folders within partition
     folders = os.listdir(partitionPath)
@@ -73,7 +103,7 @@ def main():
         if os.path.isdir(folderPath):
             counter += 1
             print '\n >> ' + str(counter) + '. Looking into: \"' + folder + '\" ... '
-            ProcessFolder(folderPath)
+            ProcessFrames(folderPath, margin)
 
     print
 

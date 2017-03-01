@@ -92,8 +92,14 @@ def main():
     partitionPath = sys.argv[1]
     margin = int(sys.argv[2])
 
+    if len(sys.argv) == 3:
+        outputPath = 'statistics.csv'
+    else:
+        outputPath = sys.argv[3]
+
     print '\n >> Partition path: \"' + partitionPath + '\"'
-    print '\n >> Margin: \"' + str(margin) + '\"'
+    print ' >> Output path: \"' + outputPath + '\"'
+    print ' >> Margin: \"' + str(margin) + '\"'
 
     statistics = np.asarray([])
 
@@ -113,7 +119,7 @@ def main():
             else:
                 statistics = np.vstack((statistics, [folder, str(nGoodFrames)]))
 
-    np.savetxt("statistics.csv", statistics, delimiter=",", fmt="%s")
+    np.savetxt(outputPath, statistics, delimiter=",", fmt="%s")
     print
 
 if __name__ == "__main__":

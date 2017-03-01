@@ -23,7 +23,7 @@ def ProcessFrames(folderPath, margin):
         if diff[0,1] <= margin:
             nGoodFrames += 1
 
-    print ' >> ' + str(nGoodFrames)
+    return nGoodFrames
 
 def ProcessCSVRow(csvRow):
 
@@ -95,6 +95,8 @@ def main():
     print '\n >> Partition path: \"' + partitionPath + '\"'
     print '\n >> Margin: \"' + str(margin) + '\"'
 
+    statistics = np.asarray([])
+
     # Get list of folders within partition
     folders = os.listdir(partitionPath)
     counter = 0
@@ -103,8 +105,15 @@ def main():
         if os.path.isdir(folderPath):
             counter += 1
             print '\n >> ' + str(counter) + '. Looking into: \"' + folder + '\" ... '
-            ProcessFrames(folderPath, margin)
+            nGoodFrames = ProcessFrames(folderPath, margin)
 
+            print ' >> Number of valid frames: ' + str(nGoodFrames)
+            if statistics.size == 0:
+                statistics = np.asarray([folder, str(nGoodFrames)])
+            else:
+                statistics = np.vstack((statistics, [folder, str(nGoodFrames)]))
+
+    np.savetxt("statistics.csv", statistics, delimiter=",", fmt="%s")
     print
 
 if __name__ == "__main__":

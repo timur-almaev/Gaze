@@ -23,7 +23,7 @@ def ProcessFrames(folderPath, margin):
         if diff[0,1] <= margin:
             nGoodFrames += 1
 
-    return ( nGoodFrames, len(frames) )
+    return ( nGoodFrames, len(frames), len(csvTimeStamps) )
 
 def ProcessCSVRow(csvRow):
 
@@ -111,15 +111,16 @@ def main():
         if os.path.isdir(folderPath):
             counter += 1
             print '\n >> ' + str(counter) + '. Looking into: \"' + folder + '\" ... '
-            ( nGoodFrames, nFrames ) = ProcessFrames(folderPath, margin)
+            ( nGoodFrames, nFrames, nSensorReadings ) = ProcessFrames(folderPath, margin)
 
-            print ' >> Total number of frames: ' + str(nFrames)
+            print ' >> Number of frames: ' + str(nFrames)
+            print ' >> Number of sensor readings: ' + str(nSensorReadings)
             print ' >> Number of valid frames: ' + str(nGoodFrames)
 
             if statistics.size == 0:
-                statistics = np.asarray([folder, str(nFrames), str(nGoodFrames)])
+                statistics = np.asarray([folder, str(nFrames), str(nSensorReadings), str(nGoodFrames)])
             else:
-                statistics = np.vstack((statistics, [folder, str(nFrames), str(nGoodFrames)]))
+                statistics = np.vstack((statistics, [folder, str(nFrames), str(nSensorReadings), str(nGoodFrames)]))
 
     np.savetxt(outputPath, statistics, delimiter=",", fmt="%s")
     print

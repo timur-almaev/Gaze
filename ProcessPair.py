@@ -5,6 +5,9 @@
 
 import numpy as np
 
+from Coordinates2EyeClasses import Coordinates2EyeClasses
+from EyeClasses2FrameClass  import EyeClasses2FrameClass
+
 def ProcessPair(timestamp, sTimeStamps, csvReadings):
 
     # Compute difference between the timestamp and every sensor reading
@@ -25,8 +28,18 @@ def ProcessPair(timestamp, sTimeStamps, csvReadings):
     sReading = csvReadings[index, :]
     basename = 'webcamera-' + str(long(timestamp))
     stimestamp = sTimeStamps[index]
+
+    # Get left eye class
+    leftEyeClass = Coordinates2EyeClasses(sReading[0], sReading[1])
+
+    # Get right eye class
+    rightEyeClass = Coordinates2EyeClasses(sReading[8], sReading[9])
+
+    # Get frame class
+    frameClass = EyeClasses2FrameClass(leftEyeClass, rightEyeClass)
+
     content = [basename, str(long(stimestamp)), str(int(mindiff)), str(int(index)),
-               str(sReading[0]), str(sReading[1]), 
-               str(sReading[8]), str(sReading[9])]
+               str(sReading[0]), str(sReading[1]), str(leftEyeClass),
+               str(sReading[8]), str(sReading[9]), str(rightEyeClass), str(frameClass)]
 
     return content

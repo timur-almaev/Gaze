@@ -15,11 +15,12 @@ def ProcessRecording(folderPath):
 
     fTimestamps = GetFileTimeStamps(folderPath)
     csvReadings = GetSensorReadings(folderPath)
-
+    
     # Get the last column of readings with timestamps
     sTimeStamps = csvReadings[:, -1]
 
-    frames = np.asarray(['filename', 'stimestamp', 'diff', 'sindex'])
+    frames = np.asarray(['filename', 'stimestamp', 'diff', 'sindex', 
+                         'left-eye-i', 'left-eye-j', 'right-eye-i', 'right-eye-j'])
     for timestamp in fTimestamps:
 
         if not CheckCameraFrame(folderPath, timestamp, '-right.png'):
@@ -29,7 +30,7 @@ def ProcessRecording(folderPath):
             continue
 
         # Add frame pair to the list
-        pair = ProcessPair(timestamp, sTimeStamps)
+        pair = ProcessPair(timestamp, sTimeStamps, csvReadings) # pylint: disable=I0011,E1121
         frames = np.vstack((frames, pair))
 
     # Print total number of pairs

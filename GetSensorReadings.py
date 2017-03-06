@@ -6,7 +6,7 @@
 import os
 import numpy as np
 
-def GetSensorTimeStamps(folderPath):
+def GetSensorReadings(folderPath):
 
     # Compose path to sensor readings csv
     csvPath = os.path.join(folderPath, 'sensor.csv')
@@ -17,15 +17,12 @@ def GetSensorTimeStamps(folderPath):
         return
 
     # Read CSV sensor readings file into numpy matrix
-    csvReading = np.genfromtxt(csvPath, delimiter=',')
-
-    # Get the last column of readings with timestamps
-    csvTimeStamps = csvReading[:, -1]
+    csvReadings = np.genfromtxt(csvPath, delimiter=',')
 
     # Remove first header row
-    csvTimeStamps = np.delete(csvTimeStamps, 0)
+    csvReadings = np.delete(csvReadings, (0), axis=0)
 
     # Print total number of sensor readings
-    print '\t >> Number of sensor readings: ' + str(len(csvTimeStamps))
+    print '\t >> #Sensor readings: ' + str(csvReadings.shape[0])
 
-    return csvTimeStamps
+    return csvReadings

@@ -6,15 +6,18 @@
 import os
 import numpy as np
 
-from GetFileTimeStamps   import GetFileTimeStamps
-from GetSensorTimeStamps import GetSensorTimeStamps
-from CheckCameraFrame    import CheckCameraFrame
-from ProcessPair         import ProcessPair
+from GetFileTimeStamps import GetFileTimeStamps
+from GetSensorReadings import GetSensorReadings
+from CheckCameraFrame  import CheckCameraFrame
+from ProcessPair       import ProcessPair
 
 def ProcessRecording(folderPath):
 
     fTimestamps = GetFileTimeStamps(folderPath)
-    sTimeStamps = GetSensorTimeStamps(folderPath)
+    csvReadings = GetSensorReadings(folderPath)
+
+    # Get the last column of readings with timestamps
+    sTimeStamps = csvReadings[:, -1]
 
     frames = np.asarray(['filename', 'stimestamp', 'diff', 'sindex'])
     for timestamp in fTimestamps:

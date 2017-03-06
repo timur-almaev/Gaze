@@ -16,7 +16,7 @@ def GetFileTimeStamps(folderPath):
     listing = glob.glob(pattern)
     
     # Display total number of frames
-    print '\n\t >> Number of frames: ' + str(len(listing))
+    print '\n\t >> #Frames: ' + str(len(listing))
 
     timestamps = []
     for element in listing:

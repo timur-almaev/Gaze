@@ -19,12 +19,10 @@ def Coordinates2EyeClasses(i, j):
 
 
     if i <= 0 or j <= 0:
-        label = 0
-        return
+        return 0
 
     if i > screenDimX or j > screenDimY:
-        label = 0
-        return
+        return 0
 
 
 

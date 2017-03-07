@@ -8,6 +8,24 @@ import os
 import glob
 import numpy as np
 
+def BuildHistogram(arr, fname):
+
+    # Get the sum of rows
+    arr = arr.sum(axis=0)
+
+    # Remove first column (class 0)
+    arr = arr[1:]
+
+    arr = arr / arr.sum()
+
+    # Print distribution
+    for element in arr:
+        print element
+    print
+
+    # Save distribution
+    np.savetxt(fname, arr, delimiter=",", fmt="%s")
+
 def main():
     os.system('clear')
 
@@ -18,6 +36,16 @@ def main():
     partitionPath = sys.argv[1]
     print '\n >> Partition path: \"' + partitionPath + '\" \n'
 
+    leftEyeDistribtionCSV = os.path.join(partitionPath, 'left-eye-distribution.csv')
+    if os.path.isfile(leftEyeDistribtionCSV):
+        print ' >> Found exisitng left eye distribution CSV. Removing ... '
+        os.remove(leftEyeDistribtionCSV)
+
+    rightEyeDistribtionCSV = os.path.join(partitionPath, 'right-eye-distribution.csv')
+    if os.path.isfile(rightEyeDistribtionCSV):
+        print ' >> Found exisitng right eye distribution CSV. Removing ... '
+        os.remove(rightEyeDistribtionCSV)
+
     pattern = os.path.join(partitionPath, '*.csv')
     listing = glob.glob(pattern)
 
@@ -26,7 +54,7 @@ def main():
 
     hCounter = 0
     for element in listing:
-        print ' >> Checking ' + os.path.basename(element) + ' ... '
+        print '\n >> Checking \"' + os.path.basename(element) + '\" ... '
 
         data = np.genfromtxt(element, delimiter=',')
         data = np.delete(data, (0), axis=0)
@@ -39,21 +67,11 @@ def main():
 
         hCounter += 1
 
-    lEyeHistogram = lEyeHistogram.sum(axis=0)
-    rEyeHistogram = rEyeHistogram.sum(axis=0)
+    print '\n >> Left eye distribution: \n'
+    BuildHistogram(lEyeHistogram, leftEyeDistribtionCSV)
 
-    lEyeHistogram = lEyeHistogram[1:]
-    rEyeHistogram = rEyeHistogram[1:]
-
-    lEyeHistogram = lEyeHistogram / lEyeHistogram.sum()
-    rEyeHistogram = rEyeHistogram / rEyeHistogram.sum()
-
-    # Normalise histograms
-    lEyeHistogram = (lEyeHistogram - lEyeHistogram.min()) / (lEyeHistogram.max() - lEyeHistogram.min())
-    rEyeHistogram = (rEyeHistogram - rEyeHistogram.min()) / (rEyeHistogram.max() - rEyeHistogram.min())
-
-    print lEyeHistogram
-    print rEyeHistogram
+    print '\n >> Right eye distribution: \n'
+    BuildHistogram(rEyeHistogram, rightEyeDistribtionCSV)
 
 if __name__ == "__main__":
     main()

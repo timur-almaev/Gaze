@@ -62,6 +62,9 @@ def main():
         lEyeClasses = data[:, 6]
         rEyeClasses = data[:, 9]
 
+        diffs = data[:, 2]
+        print '\t >> Maximum difference: ' + str(diffs.max())
+
         lEyeHistogram[hCounter, :] = np.histogram(lEyeClasses, bins=range(14))[0]
         rEyeHistogram[hCounter, :] = np.histogram(rEyeClasses, bins=range(14))[0]
 

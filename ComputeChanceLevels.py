@@ -16,12 +16,15 @@ def BuildHistogram(arr, fname):
     # Remove first column (class 0)
     arr = arr[1:]
 
-    arr = arr / arr.sum()
-
+    arrSum = arr.sum()
+    arr = arr / arrSum
+    
     # Print distribution
     for element in arr:
         print element
     print
+
+    print ' >> Pairs: ' + str(arrSum) + '\n'
 
     # Save distribution
     np.savetxt(fname, arr, delimiter=",", fmt="%s")
@@ -62,7 +65,18 @@ def main():
         lEyeClasses = data[:, 6]
         rEyeClasses = data[:, 9]
 
+        lZeroIndexes = np.where(lEyeClasses == 0)
+        rZerosIndexes = np.where(rEyeClasses == 0)
+
+        lZeroIndexes = lZeroIndexes[0]
+        rZerosIndexes = rZerosIndexes[0]
+        zeroIndexes = np.concatenate((lZeroIndexes, rZerosIndexes))
+
+        lEyeClasses = np.delete(lEyeClasses, zeroIndexes)
+        rEyeClasses = np.delete(rEyeClasses, zeroIndexes)
+
         diffs = data[:, 2]
+        diffs = np.delete(diffs, zeroIndexes)
         print '\t >> Maximum difference: ' + str(diffs.max())
 
         lEyeHistogram[hCounter, :] = np.histogram(lEyeClasses, bins=range(14))[0]
@@ -73,7 +87,7 @@ def main():
     print '\n >> Left eye distribution: \n'
     BuildHistogram(lEyeHistogram, leftEyeDistribtionCSV)
 
-    print '\n >> Right eye distribution: \n'
+    print ' >> Right eye distribution: \n'
     BuildHistogram(rEyeHistogram, rightEyeDistribtionCSV)
 
 if __name__ == "__main__":

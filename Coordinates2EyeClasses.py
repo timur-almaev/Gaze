@@ -5,7 +5,7 @@
 
 # This function can compute the boundaries of each class
 # given screen resolution. Currently it is 1920x1080, which
-# make the size of a segment 480x270.
+# make the size of a segment 480x360.
 
 screenDimX = 1920
 screenDimY = 1080
@@ -14,7 +14,7 @@ def Coordinates2EyeClasses(i, j):
     label = 0
 
     segmentX = screenDimX / 4
-    segmentY = screenDimY / 4
+    segmentY = screenDimY / 3
 
 
 
